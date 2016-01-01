@@ -1,0 +1,14 @@
+{
+  "name": "neo4j-query",
+  "version": "0.0.1",
+  "description": "Wrapper for Neo4J REST API to execute cypher queries",
+  "main": "index.js",
+  "keywords": [
+    "neo4j",
+    "query",
+    "rest",
+    "node"
+  ],
+  "author": "Nenad Vukicevic",
+  "license": "MIT"
+}
