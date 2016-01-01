@@ -1,14 +1,25 @@
 {
   "name": "neo4j-query",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Wrapper for Neo4J REST API to execute cypher queries",
   "main": "index.js",
   "keywords": [
     "neo4j",
     "query",
     "rest",
-    "node"
+    "node",
+    "cypher",
+    "graph",
+    "batch",
+    "transaction"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vukicevic/neo4j-query.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vukicevic/neo4j-query/issues"
+  },
   "author": "Nenad Vukicevic",
   "license": "MIT"
 }

@@ -1,26 +1,31 @@
 'use strict';
 
 var http = require('http');
+var url  = require('url');
 
-module.exports = function (host, port, user, pass) {
+module.exports = function (uri, user, pass) {
+
+	var parts   = url.parse(uri);
+	var auth    = parts.auth || user + ':' + pass;
 
 	var options = {
-		'host'    : host,
-		'port'    : port,
-		'path'    : '/db/data/transaction/commit',
-		'method'  : 'POST',
-		'headers' : {
+		'host'     : parts.hostname,
+		'port'     : parts.port,
+		'protocol' : parts.protocol,
+		'auth'     : auth,
+		'path'     : '/db/data/transaction/commit',
+		'method'   : 'POST',
+		'headers'  : {
 			'Content-Type'   : 'application/json',
-			'Content-Length' : 0,
-			'Authorization'  : 'Basic ' + new Buffer(user + ':' + pass).toString('base64')
+			'Content-Length' : 0
 		}
 	};
 
-	var request = function (data, callback) {
+	var request = function (payload, callback) {
 
-		var payload = JSON.stringify(data);
+		var data = JSON.stringify(payload);
 
-		options.headers['Content-Length'] = Buffer.byteLength(payload);
+		options.headers['Content-Length'] = Buffer.byteLength(data);
 
 		var request = http.request(options, function (response) {
 
@@ -31,12 +36,13 @@ module.exports = function (host, port, user, pass) {
 			});
 
 			response.on('end', function () {
-				callback(JSON.parse(body));
+				callback(null, JSON.parse(body));
 			});
 
 		});
 
-		request.write(payload);
+		request.on('error', callback);
+		request.write(data);
 		request.end();
 	};
 
@@ -54,55 +60,57 @@ module.exports = function (host, port, user, pass) {
 		});
 	};
 
-	var query = function (query, params, callback) {
+	var query = function (query, param, callback) {
 
-		var statements = [ {
-			'statement'  : query,
-			'parameters' : params
-		} ];
+		if (typeof param === 'function') {
+			callback = param;
+			param    = undefined;
+		}
 
-		var payload = {
-			'statements' : statements
-		};
+		batch([query], [param], function (error, result) {
 
-		request(payload, function (body) {
-
-			if (body.errors.length > 0) {
-				callback(body.errors);
-			} else {
-				callback(null, body.results.map(parse).pop());
+			if (Array.isArray(error)) {
+				error = error.pop();
 			}
+
+			if (Array.isArray(result)) {
+				result = result.pop();
+			}
+
+			callback(error, result);
 		});
 	};
 
 	var batch = function (queries, params, callback) {
 
-		var statements = [];
+		var payload = {
+			'statements' : []
+		};
 
 		queries.forEach(function (query, index) {
-			statements.push({
+			payload.statements.push({
 				'statement'  : query,
 				'parameters' : params[index]
 			});
 		});
 
-		var payload = {
-			'statements' : statements
-		};
+		request(payload, function (error, response) {
 
-		request(payload, function (body) {
-
-			if (body.errors.length > 0) {
-				callback(body.errors);
-			} else {
-				callback(null, body.results.map(parse));
+			if (error) {
+				return callback(error);
 			}
+
+			if (response.errors.length > 0) {
+				return callback(response.errors);
+			}
+
+			callback(null, response.results.map(parse));
 		});
 	};
 
 	return {
 		'query' : query,
 		'batch' : batch
-	}
+	};
 
 };
