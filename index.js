@@ -9,7 +9,7 @@ module.exports = function (uri, user, pass) {
 	var auth    = parts.auth || user + ':' + pass;
 
 	var options = {
-		'host'     : parts.hostname,
+		'hostname' : parts.hostname,
 		'port'     : parts.port,
 		'protocol' : parts.protocol,
 		'auth'     : auth,

@@ -1,8 +1,11 @@
 {
   "name": "neo4j-query",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wrapper for Neo4J REST API to execute cypher queries",
   "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
   "keywords": [
     "neo4j",
     "query",
@@ -21,5 +24,8 @@
     "url": "https://github.com/vukicevic/neo4j-query/issues"
   },
   "author": "Nenad Vukicevic",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.3.4"
+  }
 }
