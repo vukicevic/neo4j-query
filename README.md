@@ -1,4 +1,4 @@
-# neo4j-query
+# neo4j-query [![Build Status](https://semaphoreci.com/api/v1/projects/3bfeb4bc-774d-4298-8fe1-7e22f6e24bb5/651323/badge.svg)](https://semaphoreci.com/vukicevic/neo4j-query)
 
 A simple wrapper for the Neo4J transactional endpoint. Useful for executing Cypher queries from node.
 
